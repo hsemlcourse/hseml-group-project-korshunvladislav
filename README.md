@@ -1,9 +1,9 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/kOqwghv0)
-# ML Project — [Название проекта]
+# ML Project — Прогнозирование пожизненной ценности клиента (CLV)
 
-**Студент:** [ФИО / Student ID]
+**Студент:** Коршун В.
 
-**Группа:** [Группа]
+**Группа:** БИВ 237
 
 
 ## Оглавление
@@ -13,22 +13,20 @@
 3. [Запуски](#быстрый-старт)
 4. [Данные](#данные)
 5. [Результаты](#результаты)
-7. [Отчёт](#отчёт)
+6. [Отчёт](#отчёт)
 
 
 ## Описание задачи
 
-<!-- Кратко опишите задачу: что предсказываем, какой датасет, метрика качества -->
+**Задача:** Регрессия — прогнозирование пожизненной ценности клиента (Customer Lifetime Value, CLV) на основе поведенческих и демографических признаков.
 
-**Задача:** [Классификация / Регрессия / Кластеризация / ...]
+**Датасет:** [Ecommerce Customer Behavior Dataset](https://www.kaggle.com/datasets/dhairyajeetsingh/ecommerce-customer-behavior-dataset) с Kaggle (50 000 записей, 25 признаков).
 
-**Датасет:** [Название и источник датасета]
-
-**Целевая метрика:** [Accuracy / F1 / RMSE / ...]
+**Целевая метрика:** RMSE (основная), дополнительные — MAE и R².
 
 
 ## Структура репозитория
-Опишите структуру проекта, сохранив при этом верхнеуровневые папки. Можно добавить новые при необходимости.
+
 ```
 .
 ├── data
@@ -36,9 +34,7 @@
 │   └── raw                     # Исходные файлы
 ├── models                      # Сохранённые модели 
 ├── notebooks
-│   ├── 01_eda.ipynb            # EDA
-│   ├── 02_baseline.ipynb       # Baseline-модель
-│   └── 03_experiments.ipynb    # Эксперименты и ablation study
+│   └── cp1.ipynb               # Основной ноутбук CP1 (очистка, EDA, модели)
 ├── presentation                # Презентация для защиты
 ├── report
 │   ├── images                  # Изображения для отчёта
@@ -54,11 +50,10 @@
 
 ## Запуск
 
-Этот блок замените способом запуска вашего сервиса.
 ```bash
 # 1. Клонировать репозиторий
-git clone <url>
-cd <repo-name>
+git clone https://github.com/hsemlcourse/hseml-group-project-korshunvladislav.git
+cd hseml-group-project-korshunvladislav
 
 # 2. Создать виртуальное окружение
 python -m venv .venv
@@ -67,19 +62,28 @@ source .venv/bin/activate   # Linux/macOS
 
 # 3. Установить зависимости
 pip install -r requirements.txt
+
+# 4. Скачать датасет и поместить в data/raw
+
+# 5. Запустить ноутбук
+jupyter notebook notebooks/cp1.ipynb
 ```
 
 ## Данные
-- `data/raw/` — исходные файлы
-- `data/processed/` — предобработанные данные
+- `data/raw/` — исходный файл ecommerce_customer_churn_data.csv (скачан с Kaggle)
+- `data/processed/` — пока не используется, все преобразования выполняются в ноутбуке
 
 
 ## Результаты
 Здесь коротко выпишите результаты.
-| Модель | [Метрика 1] | [Метрика 2] | Примечание |
-|--------|-------------|-------------|------------|
-| Baseline | — | — | |
-| Лучшая модель | — | — | |
+| Модель | RMSE (val) | MAE (val) | R² (val) | Примечание |
+|--------|------------|-----------|----------|------------|
+| Baseline (Linear Regression, исходные признаки) | 350.23 | 236.26 | 0.853 | без feature engineering |
+| Linear Regression (все признаки) | 348.02 | 235.34 | 0.855 | 	с новыми фичами |
+| Ridge Regression (alpha=1.0) | 348.02 | 235.34 | 0.855 | 	регуляризация |
+| Lasso Regression (alpha=1.0) | 348.07 | 235.17 | 0.855 | 	регуляризация |
+| **Random Forest (n=100)** | **233.56** | **153.86** | **0.935** | **лучшая модель** |
+| Random Forest (n=50) | 235.10 | 154.88 | 0.934 | быстрее, чуть хуже |
 
 
 ## Отчёт
