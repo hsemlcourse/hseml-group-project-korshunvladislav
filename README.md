@@ -1,9 +1,9 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/kOqwghv0)
-# ML Project — [Название проекта]
+# ML Project — Прогнозирование пожизненной ценности клиента (CLV)
 
-**Студент:** [ФИО / Student ID]
+**Студент:** Коршун В.И.
 
-**Группа:** [Группа]
+**Группа:** БИВ237
 
 
 ## Оглавление
@@ -18,17 +18,14 @@
 
 ## Описание задачи
 
-<!-- Кратко опишите задачу: что предсказываем, какой датасет, метрика качества -->
+**Задача:** Регрессия — прогнозирование пожизненной ценности клиента (Customer Lifetime Value, CLV) на основе поведенческих и демографических признаков.
 
-**Задача:** [Классификация / Регрессия / Кластеризация / ...]
+**Датасет:** [Ecommerce Customer Behavior Dataset](https://www.kaggle.com/datasets/dhairyajeetsingh/ecommerce-customer-behavior-dataset) с Kaggle (50000 записей, 25 признаков).
 
-**Датасет:** [Название и источник датасета]
-
-**Целевая метрика:** [Accuracy / F1 / RMSE / ...]
+**Целевая метрика:** RMSE (основная), дополнительные — MAE и R².
 
 
 ## Структура репозитория
-Опишите структуру проекта, сохранив при этом верхнеуровневые папки. Можно добавить новые при необходимости.
 ```
 .
 ├── data
@@ -54,11 +51,12 @@
 
 ## Запуск
 
-Этот блок замените способом запуска вашего сервиса.
+### Локальный запуск (без Docker)
+
 ```bash
 # 1. Клонировать репозиторий
-git clone <url>
-cd <repo-name>
+git clone https://github.com/hsemlcourse/hseml-group-project-korshunvladislav.git
+cd hseml-group-project-korshunvladislav
 
 # 2. Создать виртуальное окружение
 python -m venv .venv
@@ -67,6 +65,28 @@ source .venv/bin/activate   # Linux/macOS
 
 # 3. Установить зависимости
 pip install -r requirements.txt
+
+# 4. Запустить Jupyter Notebook
+jupyter notebook notebooks/
+```
+
+### Запуск через Docker
+
+```bash
+# 1. Клонировать репозиторий
+git clone https://github.com/hsemlcourse/hseml-group-project-korshunvladislav.git
+cd hseml-group-project-korshunvladislav
+
+# 2. Собрать образ
+docker-compose build
+
+# 3. Запустить контейнер
+docker-compose up
+
+# 4. Получить ссылку на запущенный Jupyter
+jupyter server list
+
+# 5. Открыть в браузере нужную ссылку из списка
 ```
 
 ## Данные
@@ -75,11 +95,15 @@ pip install -r requirements.txt
 
 
 ## Результаты
-Здесь коротко выпишите результаты.
-| Модель | [Метрика 1] | [Метрика 2] | Примечание |
-|--------|-------------|-------------|------------|
-| Baseline | — | — | |
-| Лучшая модель | — | — | |
+
+| Модель | RMSE | MAE | R2 | Примечание |
+|--------|------|-----|----|------------|
+| Baseline (Lasso) | 350.129535 | 236.068940 | 0.853155 | Линейная модель без feature engineering, только исходные закодированные признаки |
+| **CatBoost default** | **225.103129** | **151.461374** | **0.939303** | **Лучшая модель** – после feature engineering и кодирования категорий, без перебора гиперпараметров |
+
+**Вывод:** CatBoost default показал снижение RMSE на **36%** по сравнению с Baseline Lasso, что объясняется способностью градиентного бустинга учитывать нелинейные зависимости и взаимодействия признаков. Тестовая оценка CatBoost: RMSE = 224.85, MAE = 150.92, R2 = 0.940 (стабильность подтверждена).
+
+> **Примечание:** Модель CatBoost обучена на данных после полной очистки, feature engineering (54 новых признака) и one‑hot кодирования. Гиперпараметры оставлены по умолчанию, так как уже дали отличный результат. Дополнительный перебор (RandomizedSearchCV) для XGBoost и LightGBM не улучшил качество относительно CatBoost.
 
 
 ## Отчёт
