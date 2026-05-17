@@ -1,0 +1,14 @@
+__pycache__
+*.pyc
+.venv
+venv
+.env
+.git
+.gitignore
+*.ipynb_checkpoints
+.pytest_cache
+*.pkl
+data/raw/*.csv
+data/processed/*.csv
+models/*.pkl
+.DS_Store
